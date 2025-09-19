@@ -1,6 +1,7 @@
 mod asteroid;
 mod asteroid_manager;
 mod bullet;
+mod bullet_manager;
 mod game;
 mod global;
 mod ship;

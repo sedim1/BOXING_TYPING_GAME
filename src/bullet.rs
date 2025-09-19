@@ -2,15 +2,15 @@ use crate::game::{SH, SW};
 use crate::{asteroid::*, asteroid_manager};
 use raylib::prelude::*;
 
-struct Bullet {
+pub struct Bullet {
     position: Vector2,
     direction: Vector2,
     radius: f32,
-    alive: bool,
+    pub alive: bool,
 }
 
 impl Bullet {
-    fn new(position: Vector2, direction: Vector2) -> Self {
+    pub fn new(position: Vector2, direction: Vector2) -> Self {
         Bullet {
             position,
             direction,
@@ -33,12 +33,13 @@ impl Bullet {
             asteroid.radius,
         ) {
             asteroid.destroy(rl, thread, asteroid_manager);
+            self.alive = false;
         }
     }
 
-    fn update(&mut self, dt: f32) {
+    pub fn update(&mut self, dt: f32) {
         if self.alive {
-            let speed: f32 = 300.0;
+            let speed: f32 = 1200.0;
             self.position += self.direction * speed * dt;
 
             let out_x: bool = self.position.x < -self.radius * 2.0
@@ -47,12 +48,13 @@ impl Bullet {
                 || self.position.y > SH as f32 + self.radius * 2.0;
 
             if out_x || out_y {
+                println!("bullet outside screen");
                 self.alive = false;
             }
         }
     }
 
-    fn draw(&self, d: &mut RaylibDrawHandle) {
-        d.draw_circle_v(self.position, self.radius, Color::WHITE);
+    pub fn draw(&self, d: &mut RaylibDrawHandle) {
+        d.draw_circle_v(self.position, self.radius, Color::RED);
     }
 }

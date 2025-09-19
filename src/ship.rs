@@ -1,3 +1,4 @@
+use crate::bullet_manager::*;
 use crate::game::{SH, SH2, SW, SW2};
 use crate::global;
 use raylib::prelude::*;
@@ -14,6 +15,7 @@ pub struct Ship {
     pub speed: f32,
     pub radius: f32,
     pub state: PlayerStates,
+    pub bullet_shooter: BulletManager,
 }
 
 impl Ship {
@@ -25,6 +27,7 @@ impl Ship {
             speed: 0.0,
             radius: 15.0,
             state: PlayerStates::ALIVE,
+            bullet_shooter: BulletManager::new(),
         }
     }
 
@@ -65,6 +68,10 @@ impl Ship {
     pub fn update(&mut self, rl: &mut RaylibHandle, dt: f32) {
         self.rotate_player(rl, dt);
         self.move_player(rl, dt);
+        if rl.is_key_pressed(KeyboardKey::KEY_Z) {
+            self.bullet_shooter
+                .ShootBullet(self.position.clone(), self.angle);
+        }
     }
 
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
