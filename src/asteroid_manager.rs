@@ -108,7 +108,8 @@ impl AsteroidManager {
                     //Destroy current asteroid and bullet and add 3 more if possible
                     bullet_manager.bullets[j].alive = false;
                     self.active_asteroids[i].alive = false;
-                    let mut angle: f32 = 45.0;
+                    let mut rng = rand::rng();
+                    let mut angle: f32 = rng.random_range(45.0..=90.0);
                     for x in 0..4 {
                         let position: Vector2 = self.active_asteroids[i].position.clone();
                         let direction: Vector2 = Vector2::new(
