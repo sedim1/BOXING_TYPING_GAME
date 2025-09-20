@@ -4,7 +4,7 @@ use raylib::prelude::*;
 use std::vec;
 
 pub struct BulletManager {
-    bullets: Vec<Bullet>,
+    pub bullets: Vec<Bullet>,
 }
 
 impl BulletManager {
@@ -25,6 +25,7 @@ impl BulletManager {
     }
 
     pub fn update_bullets(&mut self, dt: f32) {
+        self.erase_inactive_bullets();
         for bullet in self.bullets.iter_mut() {
             bullet.update(dt);
         }

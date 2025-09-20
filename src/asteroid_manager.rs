@@ -1,4 +1,6 @@
 use crate::asteroid::{Asteroid, AsteroidType};
+use crate::bullet;
+use crate::bullet_manager::{self, BulletManager};
 use crate::game::{SH, SW};
 use crate::ship::*;
 use rand::*;
@@ -89,13 +91,52 @@ impl AsteroidManager {
         }
     }
 
+    pub fn process_collisions_with_bullets(
+        &mut self,
+        rl: &mut RaylibHandle,
+        thread: &RaylibThread,
+        bullet_manager: &mut BulletManager,
+    ) {
+        for i in 0..self.active_asteroids.len() {
+            for j in 0..bullet_manager.bullets.len() {
+                if check_collision_circles(
+                    self.active_asteroids[i].position,
+                    self.active_asteroids[i].radius,
+                    bullet_manager.bullets[j].position,
+                    bullet_manager.bullets[j].radius,
+                ) {
+                    //Destroy current asteroid and bullet and add 3 more if possible
+                    bullet_manager.bullets[j].alive = false;
+                    self.active_asteroids[i].alive = false;
+                    let mut angle: f32 = 45.0;
+                    for x in 0..4 {
+                        let position: Vector2 = self.active_asteroids[i].position.clone();
+                        let direction: Vector2 = Vector2::new(
+                            f32::cos(angle.to_radians()),
+                            f32::sin(angle.to_radians()),
+                        );
+                        let state: AsteroidType = match self.active_asteroids[i].state {
+                            AsteroidType::BIG => AsteroidType::MEDIUM,
+                            AsteroidType::MEDIUM => AsteroidType::SMALL,
+                            AsteroidType::SMALL => return,
+                        };
+                        self.active_asteroids
+                            .push(Asteroid::new(rl, thread, position, direction, state));
+                        angle += 90.0;
+                    }
+                }
+            }
+        }
+    }
+
     pub fn process_collisions_with_ship(&mut self, ship: &mut Ship) {
         match ship.state {
             PlayerStates::ALIVE => {
                 for asteroid in self.active_asteroids.iter_mut() {
                     if asteroid.crashes_with_ship(ship) {
                         asteroid.alive = false;
-                        ship.state = PlayerStates::DEAD
+                        ship.state = PlayerStates::DEAD;
+                        return;
                     }
                 }
             }

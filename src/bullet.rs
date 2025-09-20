@@ -3,9 +3,9 @@ use crate::{asteroid::*, asteroid_manager};
 use raylib::prelude::*;
 
 pub struct Bullet {
-    position: Vector2,
+    pub position: Vector2,
     direction: Vector2,
-    radius: f32,
+    pub radius: f32,
     pub alive: bool,
 }
 
@@ -16,24 +16,6 @@ impl Bullet {
             direction,
             radius: 5.0,
             alive: true,
-        }
-    }
-
-    fn destroy_asteroid(
-        &mut self,
-        rl: &mut RaylibHandle,
-        thread: &RaylibThread,
-        asteroid_manager: &mut Vec<Asteroid>,
-        asteroid: &mut Asteroid,
-    ) {
-        if check_collision_circles(
-            self.position,
-            self.radius,
-            asteroid.position,
-            asteroid.radius,
-        ) {
-            asteroid.destroy(rl, thread, asteroid_manager);
-            self.alive = false;
         }
     }
 
@@ -55,6 +37,6 @@ impl Bullet {
     }
 
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
-        d.draw_circle_v(self.position, self.radius, Color::RED);
+        d.draw_circle_v(self.position, self.radius, Color::WHITE);
     }
 }

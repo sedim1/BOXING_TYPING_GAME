@@ -2,6 +2,7 @@ use raylib::{ffi::rlBlendMode, prelude::*};
 
 use crate::{
     SH,
+    asteroid_manager::AsteroidManager,
     game::SW,
     global,
     ship::{self, Ship},
@@ -19,7 +20,7 @@ pub struct Asteroid {
     pub position: Vector2,
     sprite: Texture2D,
     direction: Vector2,
-    state: AsteroidType,
+    pub state: AsteroidType,
     angle: f32,
     time: f64,
     pub alive: bool,
@@ -102,26 +103,5 @@ impl Asteroid {
 
     pub fn crashes_with_ship(&self, ship: &Ship) -> bool {
         check_collision_circles(self.position, self.radius, ship.position, ship.radius)
-    }
-
-    pub fn destroy(
-        &mut self,
-        rl: &mut RaylibHandle,
-        thread: &RaylibThread,
-        asteroid_manager: &mut Vec<Asteroid>,
-    ) {
-        let mut angle: f32 = 45.0;
-        for x in 0..4 {
-            let start_position: Vector2 = self.position.clone();
-            let direction: Vector2 =
-                Vector2::new(f32::cos(angle.to_radians()), f32::sin(angle.to_radians()));
-            let state: AsteroidType = match self.state {
-                AsteroidType::BIG => AsteroidType::MEDIUM,
-                AsteroidType::MEDIUM => AsteroidType::SMALL,
-                AsteroidType::SMALL => return,
-            };
-            angle += 90.0;
-        }
-        self.alive = false;
     }
 }

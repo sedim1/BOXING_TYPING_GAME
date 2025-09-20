@@ -43,6 +43,11 @@ impl Game {
         self.player.bullet_shooter.update_bullets(dt);
         self.asteroid_manager
             .process_collisions_with_ship(&mut self.player);
+        self.asteroid_manager.process_collisions_with_bullets(
+            &mut self.rl,
+            &self.thread,
+            &mut self.player.bullet_shooter,
+        );
     }
 
     fn render(&mut self) {
@@ -50,8 +55,8 @@ impl Game {
         let fps_str = fps.to_string();
         let mut d: RaylibDrawHandle = self.rl.begin_drawing(&self.thread);
         d.clear_background(Color::BLACK);
-        self.player.draw(&mut d);
         self.player.bullet_shooter.draw_bullets(&mut d);
+        self.player.draw(&mut d);
         self.asteroid_manager.draw_asteroids(&mut d);
         d.draw_text(fps_str.as_str(), 0, 0, 50, Color::WHITE);
     }
